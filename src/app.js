@@ -2,22 +2,19 @@ const express = require("express");
 
 const app = express();
 
-//This will only handle GET call to /user
-app.get("/user",(req,res) => {
-    res.send({firstname : "abhay" ,lastname :"sodha"});
+const {adminAuth , userAuth} = require("./middleware/auth");
+
+app.use("/user/login",(req,res) => {
+    res.send("user login successfully");
 });
 
-//This will only handle GET call to /user
-app.post("/user",(req,res) =>{
+app.use("/user/data",userAuth,(req,res) =>{
+    res.send("User here is your data buddy");
+});
 
-    //Here we wil writeing logic to store data in db
-
-    res.send("Data successfully saved on database");
+app.use("/admin",adminAuth,(req,res) =>{
+    res.send("you are addmin hahahaha do what you like");
 })
-
-app.delete(("/user"),(req,res) =>{
-    res.send("Deleted user successfully!");
-});
 
 app.listen(9999, () =>{
     console.log("server is listing aava dyo on navdi");
