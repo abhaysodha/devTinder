@@ -1,21 +1,33 @@
 const express = require("express");
-
+const connectDB = require("./config/database.js");
 const app = express();
+const User = require("./models/user.js");
 
-const {adminAuth , userAuth} = require("./middleware/auth");
+app.use(express.json());
 
-app.use("/user/login",(req,res) => {
-    res.send("user login successfully");
+app.post("/signup",async (req,res) =>{
+    console.log(req.body);
+
+    const user = new User(req.body);
+
+    try {
+   await user.save();
+   res.send("User signed up successfully");
+    } catch(err){
+        res.status(400).send("Internal server error" + err.message);
+    }
 });
 
-app.use("/user/data",userAuth,(req,res) =>{
-    res.send("User here is your data buddy");
-});
 
-app.use("/admin",adminAuth,(req,res) =>{
-    res.send("you are addmin hahahaha do what you like");
-})
-
-app.listen(9999, () =>{
+connectDB()
+.then(()=>{
+    console.log("Database connected successfully");
+    app.listen(9999, () =>{
     console.log("server is listing aava dyo on navdi");
 });
+})
+.catch((err)=>{
+    console.error("Database can not be connected");
+});
+
+
