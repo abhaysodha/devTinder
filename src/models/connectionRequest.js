@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const coonectionRequestSchema = new mongoose.Schema({
+const conectionRequestSchema = new mongoose.Schema({
 
     fromUserId:{
         type:mongoose.Schema.Types.ObjectId,
@@ -15,7 +15,7 @@ const coonectionRequestSchema = new mongoose.Schema({
         require : true,
         enum : {
            values :  ["ignored","interested","accepted","rejected"],
-           message : `${VALUE} is incorrect status type`,
+           message : `{VALUE} is incorrect status type`,
         }
     }
 },
@@ -24,9 +24,22 @@ const coonectionRequestSchema = new mongoose.Schema({
 }
 );
 
+conectionRequestSchema.index({fromUserId : 1, toUserId : 1});
+
+
+conectionRequestSchema.pre("save",function () {
+    const connectionRequest = this;
+    //checking to and from user id is same?
+
+    if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)){
+        throw new Error("Can't send connection request to self");
+    }
+    next();
+});
+
 const ConnectionRequestModel = new mongoose.model(
     "ConnectionRequest",
-    coonectionRequestSchema
+    conectionRequestSchema
 );
 
 module.exports = ConnectionRequestModel;
