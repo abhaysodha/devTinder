@@ -1,19 +1,20 @@
 const express = require("express");
 const connectDB = require("./config/database.js");
-const app = express();
 const cookieParser = require("cookie-parser");
-
-
-app.use(express.json());
-app.use(cookieParser());
-
 const authRouter = require("./routes/auth.js");
 const profileRouter = require("./routes/profile.js");
 const requestRouter = require("./routes/request.js");
 const userRouter = require("./routes/user.js");
 
-app.use("/", authRouter, profileRouter, requestRouter, userRouter);
 
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({extended : true}));
+app.use(cookieParser());
+
+app.use("/", authRouter, requestRouter, userRouter);
+app.use("/profile",profileRouter);
 
 connectDB()
 .then(()=>{
